@@ -1,0 +1,29 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    background-color: #7f7c61;
+    color: #f9fcee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 80vh;
+}
+.game_board{
+    display: grid;
+    grid-template-columns: repeat(3, 85px);
+    grid-template-rows: repeat(3, 85px);
+    gap: 2px;
+    color: #745944;
+    font-size: 72px;
+}
+
+.game_board_item{
+    background-color: #f9fcee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
