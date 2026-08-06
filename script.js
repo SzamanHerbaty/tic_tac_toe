@@ -2,6 +2,8 @@
 const domGrid = document.querySelectorAll(".game_board_item");
 const currentPlayer = document.querySelector(".current_player");
 const result = document.querySelector(".result");
+const restartBtn = document.querySelector(".restart_btn");
+
 
 function createPlayer(name, marker){
     if (marker !== "X" && marker !== "O"){
@@ -10,7 +12,6 @@ function createPlayer(name, marker){
 
     return {name, marker};
 }
-
 
 const gameboard = (() => {
     
@@ -72,19 +73,38 @@ const gameboard = (() => {
         return gameboardGrid;
     }
 
+    const clearGrid = () =>{
+        gameboardGrid = [0, 0, 0, 
+                         0, 0, 0, 
+                         0, 0, 0];
+    }
+
     return {
         changeGridValues,
         checkWin,
-        getGrid
+        getGrid,
+        clearGrid
     }
 })();
 
+
+/**
+ * Obiekt odpowiedzialny za kontrolę przebiegu gry.
+ * Zarządza turami graczy i aktualizacją interfejsu.
+ * @namespace gameController
+ */
 
 const gameControler = (() => {
     const playerX = createPlayer("Mariusz", "X");
     const playerO = createPlayer("Ania", "O");
 
     let activePlayer = playerX;
+
+    /**
+     * Zmienia obecnego gracza na tego, do którego należy kolejna tura.
+     * @namespace switchPlayer
+     * @private
+     */
 
     const switchPlayer = () =>{
         if (activePlayer === playerX){
@@ -95,19 +115,60 @@ const gameControler = (() => {
         }
     };
 
+    /**
+     * Zmienia wygląd elementu planszy o podanym indeksie na symbol obecnego gracza.
+     * @namespace changeDisplay
+     * @private
+     * @param {number} index - Indeks pola na planszy (od 0 do 8).
+     * @param {Object} activePlayer - Obiekt gracza wykonującego ruch.
+     */
+
     const changeDisplay = (index, activePlayer) => {
         domGrid[index].textContent = activePlayer.marker;
     }
 
-    const getActivePlayer = () => {
-        return `Player ${activePlayer.marker} turn`;
-    };
+
+    /**
+     * Wyłącza wszystkie elementy planszy (np. po zakończeniu gry),
+     * aby nie dało się ich ponownie nacisnąć.
+     * @namespace disableAllButtons
+     * @private
+     */
 
     const disableAllButtons = () => {
         domGrid.forEach(element => {
             element.classList.add("taken");
         })
     }
+
+    /**
+     * Przywraca stan gry do początkowego (czyści planszę i resetuje gracza).
+     * @namespace resetGame
+     * @public
+     */
+
+    const resetGame = () =>{
+
+        domGrid.forEach(element => {
+            element.textContent = "";
+            element.classList.remove("taken");
+        });
+
+        activePlayer = playerX;
+
+        currentPlayer.textContent = getActivePlayer();
+        result.textContent = "Result:"
+
+        gameboard.clearGrid();
+    }   
+
+    /**
+     * Odpowiada za wykonanie pojedynczej tury. 
+     * Sprawdza, czy ruch jest poprawny, aktualizuje planszę i weryfikuje wygraną.
+     * @namespace playRound
+     * @public
+     * @param {number} index - Indeks elementu planszy, który gracz chce zaznaczyć.
+     */
 
     const playRound = (index) => {
 
@@ -133,9 +194,21 @@ const gameControler = (() => {
         switchPlayer();
     }
 
+    /**
+     * Zwraca tekst informujący, którego gracza jest teraz tura.
+     * @namespace getActivePlayer
+     * @public
+     * @returns {string} Ciąg znaków z informacją o aktywnie grającym zawodniku.
+     */
+
+    const getActivePlayer = () => {
+        return `Player ${activePlayer.marker} turn`;
+    };
+
     return {
         getActivePlayer,
-        playRound
+        playRound,
+        resetGame
     }
 })();
 
@@ -149,3 +222,6 @@ domGrid.forEach((element, index) => {
         currentPlayer.textContent = gameControler.getActivePlayer();
     })
 })
+
+
+restartBtn.addEventListener("click", gameControler.resetGame);

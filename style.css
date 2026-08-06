@@ -31,3 +31,18 @@ body{
 .taken {
     pointer-events: none;
 }
+
+.restart_btn{
+    margin-top: 25px;
+    background-color: red;
+    width: 150px;
+    text-align: center;
+    font-size: 1.5rem;
+    padding: 20px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.restart_btn:hover{
+    background-color: rgb(178, 4, 4);
+}
