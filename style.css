@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 body{
-    background-color: #7f7c61;
+    background-color: rgb(127, 124, 97);
     color: #f9fcee;
     display: flex;
     align-items: center;
@@ -26,4 +26,8 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.taken {
+    pointer-events: none;
 }

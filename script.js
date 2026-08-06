@@ -1,4 +1,8 @@
 
+const domGrid = document.querySelectorAll(".game_board_item");
+const currentPlayer = document.querySelector(".current_player");
+const result = document.querySelector(".result");
+
 function createPlayer(name, marker){
     if (marker !== "X" && marker !== "O"){
         return "Enter X or O as a marker";
@@ -21,6 +25,11 @@ const gameboard = (() => {
     // Jeżeli gracz z O to gameboardGrid[index] = 2;
 
     const changeGridValues = (index, player) =>{
+
+        if(gameboardGrid[index] !== 0){
+            return "This index is already taken";
+        }
+
         if(player.marker === "X"){
             gameboardGrid[index] = 1;
         }
@@ -30,7 +39,6 @@ const gameboard = (() => {
     };
 
     const checkWin = () =>{
-
         // Lista wszystkich możliwych kombinacji które wygrywają kółko i krzyżyk
 
         const winningCombinations = [
@@ -39,7 +47,6 @@ const gameboard = (() => {
             [0, 4, 8], [2, 4, 6]             // Przekątne
         ];
         
-
         for (let combination of winningCombinations){
             const [a, b, c] = combination;
 
@@ -51,9 +58,6 @@ const gameboard = (() => {
                     return "Player O won";
                 }
             }
-            
-
-            
         }
 
         if (!gameboardGrid.includes(0)){
@@ -71,23 +75,77 @@ const gameboard = (() => {
     return {
         changeGridValues,
         checkWin,
-        getGrid: () => gameboardGrid 
+        getGrid
     }
 })();
 
 
-const playerX = createPlayer("Mariusz", "X");
-const playerO = createPlayer("Janusz", "O");
+const gameControler = (() => {
+    const playerX = createPlayer("Mariusz", "X");
+    const playerO = createPlayer("Ania", "O");
 
-console.log(playerX);
-console.log(playerO);
+    let activePlayer = playerX;
 
-console.log(gameboard.getGrid());
+    const switchPlayer = () =>{
+        if (activePlayer === playerX){
+            activePlayer = playerO;
+        }
+        else{
+            activePlayer = playerX;
+        }
+    };
 
-gameboard.changeGridValues(0, playerO)
-gameboard.changeGridValues(4, playerO)
-gameboard.changeGridValues(8, playerO)
+    const changeDisplay = (index, activePlayer) => {
+        domGrid[index].textContent = activePlayer.marker;
+    }
 
-console.log(gameboard.getGrid());
-console.log(gameboard.checkWin());
+    const getActivePlayer = () => {
+        return `Player ${activePlayer.marker} turn`;
+    };
 
+    const disableAllButtons = () => {
+        domGrid.forEach(element => {
+            element.classList.add("taken");
+        })
+    }
+
+    const playRound = (index) => {
+
+        const currentBoard = gameboard.getGrid();
+
+        if (currentBoard[index] !== 0) {
+            console.log("To pole jest już zajęte!");
+            return; 
+        }
+
+        gameboard.changeGridValues(index, activePlayer);
+
+        changeDisplay(index, activePlayer);
+
+        const winStatus = gameboard.checkWin();
+
+        if(winStatus){
+            disableAllButtons();
+            result.textContent = winStatus;
+            return;
+        }
+
+        switchPlayer();
+    }
+
+    return {
+        getActivePlayer,
+        playRound
+    }
+})();
+
+
+domGrid.forEach((element, index) => {
+    element.addEventListener("click", (e) =>{
+        gameControler.playRound(index);
+
+        e.target.classList.add("taken");
+
+        currentPlayer.textContent = gameControler.getActivePlayer();
+    })
+})
