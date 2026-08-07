@@ -43,6 +43,29 @@ body{
     transition: background-color 0.3s;
 }
 
+form{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+button{
+    margin-top: 25px;
+    border: none;
+    background-color: rgb(25, 185, 28);
+    width: 150px;
+    padding: 20px;
+    font-size: 1.5rem;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+button:hover{
+    background-color: rgb(15, 128, 17);
+}
+
 .restart_btn:hover{
     background-color: rgb(178, 4, 4);
 }

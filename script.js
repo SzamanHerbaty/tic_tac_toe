@@ -4,6 +4,10 @@ const currentPlayer = document.querySelector(".current_player");
 const result = document.querySelector(".result");
 const restartBtn = document.querySelector(".restart_btn");
 
+const form = document.querySelector(".name_form");
+
+console.log(form);
+
 
 function createPlayer(name, marker){
     if (marker !== "X" && marker !== "O"){
@@ -52,17 +56,12 @@ const gameboard = (() => {
             const [a, b, c] = combination;
 
             if (gameboardGrid[a] !== 0 && gameboardGrid[a] === gameboardGrid[b] && gameboardGrid[a] === gameboardGrid[c]){
-                if (gameboardGrid[a] === 1){
-                    return "Player X won";
-                }
-                else{
-                    return "Player O won";
-                }
+                return 1;
             }
         }
 
         if (!gameboardGrid.includes(0)){
-                return "tie";
+                return 2;
         }
 
 
@@ -91,18 +90,82 @@ const gameboard = (() => {
 /**
  * Obiekt odpowiedzialny za kontrolę przebiegu gry.
  * Zarządza turami graczy i aktualizacją interfejsu.
- * @namespace gameController
+ * @namespace
+ *  gameController
  */
 
+const displayControler = (()=>{
+
+    const removeTakenClass = () => {
+        domGrid.forEach(element => {
+            element.classList.remove("taken");
+        })
+    }
+
+    const addTakenClass = () => {
+        domGrid.forEach(element => {
+            element.classList.add("taken");
+        })
+    }
+
+
+    const updateCurrentPlayer = (text) =>{
+        currentPlayer.textContent = text;
+    }
+
+
+    const updateResult = (text) => {
+        result.textContent = text;
+    }
+
+    const updateGrid = (index, activePlayer) =>{
+        domGrid[index].textContent = activePlayer.marker;
+    }
+
+    const clearDisplay = () => {
+        domGrid.forEach(element => {
+            element.textContent = "";
+            element.classList.remove("taken");
+        })
+    }
+
+    return {
+        removeTakenClass,
+        addTakenClass,
+        updateCurrentPlayer,
+        updateResult,
+        updateGrid,
+        clearDisplay
+    }
+
+})();
+
+
+// __________________________________________________
+
 const gameControler = (() => {
-    const playerX = createPlayer("Mariusz", "X");
-    const playerO = createPlayer("Ania", "O");
+
+    let playerX = createPlayer("Player 1", "X");
+    let playerO = createPlayer("Player 2", "O");
 
     let activePlayer = playerX;
 
     /**
+     * Odpowiada za rozpoczęcie gry.
+     * @function startGame
+     * @public
+     */
+
+    const startGame = (name1, name2) => {
+        playerX = createPlayer(name1, "X");
+        playerO = createPlayer(name2, "O");
+        
+        resetGame();
+    }
+
+    /**
      * Zmienia obecnego gracza na tego, do którego należy kolejna tura.
-     * @namespace switchPlayer
+     * @function switchPlayer
      * @private
      */
 
@@ -115,57 +178,55 @@ const gameControler = (() => {
         }
     };
 
-    /**
-     * Zmienia wygląd elementu planszy o podanym indeksie na symbol obecnego gracza.
-     * @namespace changeDisplay
-     * @private
-     * @param {number} index - Indeks pola na planszy (od 0 do 8).
-     * @param {Object} activePlayer - Obiekt gracza wykonującego ruch.
-     */
-
-    const changeDisplay = (index, activePlayer) => {
-        domGrid[index].textContent = activePlayer.marker;
-    }
-
 
     /**
      * Wyłącza wszystkie elementy planszy (np. po zakończeniu gry),
      * aby nie dało się ich ponownie nacisnąć.
-     * @namespace disableAllButtons
+     * @function disableAllButtons
      * @private
      */
 
-    const disableAllButtons = () => {
-        domGrid.forEach(element => {
-            element.classList.add("taken");
-        })
-    }
 
     /**
      * Przywraca stan gry do początkowego (czyści planszę i resetuje gracza).
-     * @namespace resetGame
+     * @function resetGame
      * @public
      */
 
     const resetGame = () =>{
 
-        domGrid.forEach(element => {
-            element.textContent = "";
-            element.classList.remove("taken");
-        });
+        displayControler.clearDisplay();
 
         activePlayer = playerX;
 
-        currentPlayer.textContent = getActivePlayer();
-        result.textContent = "Result:"
+        displayControler.updateCurrentPlayer(getActivePlayer());
+        displayControler.updateResult("Result:");
 
         gameboard.clearGrid();
     }   
 
     /**
+     * Zwraca informacje o tym kto wygrał.
+     * @function whoWon
+     * @private
+     * @param {number} status - numer status (1 - jakiś gracz wygrał | 2 - remis).
+     */
+
+    const whoWon = (status) => {
+
+        switch (status){
+            case 1:
+                return `${activePlayer.name} won`;
+            case 2:
+                return `TIE`;
+        }
+
+    }
+
+    /**
      * Odpowiada za wykonanie pojedynczej tury. 
      * Sprawdza, czy ruch jest poprawny, aktualizuje planszę i weryfikuje wygraną.
-     * @namespace playRound
+     * @function playRound
      * @public
      * @param {number} index - Indeks elementu planszy, który gracz chce zaznaczyć.
      */
@@ -181,13 +242,13 @@ const gameControler = (() => {
 
         gameboard.changeGridValues(index, activePlayer);
 
-        changeDisplay(index, activePlayer);
+        displayControler.updateGrid(index, activePlayer)
 
         const winStatus = gameboard.checkWin();
 
         if(winStatus){
-            disableAllButtons();
-            result.textContent = winStatus;
+            displayControler.addTakenClass();
+            displayControler.updateResult(whoWon(winStatus));
             return;
         }
 
@@ -196,19 +257,20 @@ const gameControler = (() => {
 
     /**
      * Zwraca tekst informujący, którego gracza jest teraz tura.
-     * @namespace getActivePlayer
+     * @function getActivePlayer
      * @public
      * @returns {string} Ciąg znaków z informacją o aktywnie grającym zawodniku.
      */
 
     const getActivePlayer = () => {
-        return `Player ${activePlayer.marker} turn`;
+        return `${activePlayer.name} turn`;
     };
 
     return {
         getActivePlayer,
         playRound,
-        resetGame
+        resetGame,
+        startGame
     }
 })();
 
@@ -219,9 +281,25 @@ domGrid.forEach((element, index) => {
 
         e.target.classList.add("taken");
 
-        currentPlayer.textContent = gameControler.getActivePlayer();
+        displayControler.updateCurrentPlayer(gameControler.getActivePlayer());
     })
 })
 
 
 restartBtn.addEventListener("click", gameControler.resetGame);
+
+
+form.addEventListener("submit", (event) =>{
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+
+    const playerXName = formData.get("playerX")
+    const playerOName = formData.get("playerO")
+
+
+    gameControler.startGame(playerXName, playerOName);
+
+    form.reset();
+
+})

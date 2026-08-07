@@ -13,22 +13,34 @@
         <h1>Tic tac toe</h1>
 
         <div class="game_board">
-            <div id="grid_id_1" class="game_board_item"></div>
-            <div id="grid_id_2" class="game_board_item"></div>
-            <div id="grid_id_3" class="game_board_item"></div>
+            <div id="grid_id_1" class="game_board_item taken"></div>
+            <div id="grid_id_2" class="game_board_item taken"></div>
+            <div id="grid_id_3" class="game_board_item taken"></div>
 
-            <div id="grid_id_4" class="game_board_item"></div>
-            <div id="grid_id_5" class="game_board_item"></div>
-            <div id="grid_id_6" class="game_board_item"></div>
+            <div id="grid_id_4" class="game_board_item taken"></div>
+            <div id="grid_id_5" class="game_board_item taken"></div>
+            <div id="grid_id_6" class="game_board_item taken"></div>
             
-            <div id="grid_id_7" class="game_board_item"></div>
-            <div id="grid_id_8" class="game_board_item"></div>
-            <div id="grid_id_9" class="game_board_item"></div>
+            <div id="grid_id_7" class="game_board_item taken"></div>
+            <div id="grid_id_8" class="game_board_item taken"></div>
+            <div id="grid_id_9" class="game_board_item taken"></div>
         </div>
 
-        <h3 class="current_player">Player X turn</h3>
+        <h3 class="current_player"></h3>
         <h3 class="result">Result:</h3>
 
+        <form action="" method="post" class="name_form">
+            <div class="input_div">
+                <label for="player_x_name">Enter Player 1 name:</label>
+                <input name="playerX" id="player_x_name" type="text" minlength="3" required/>
+            </div>
+            <div class="input_div">
+                <label for="player_o_name">Enter Player 2 name:</label>
+                <input name="playerO" id="player_o_name" type="text" minlength="3" required/>
+            </div>
+
+            <button type="submit">START</button>
+        </form>
         <div class="restart_btn">RESTART</div>
         <script src="script.js" async defer></script>
     </body>
