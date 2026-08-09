@@ -1,4 +1,6 @@
-import { domGrid, currentPlayer, result } from "./script";
+const domGrid = document.querySelectorAll(".game_board_item");
+const currentPlayer = document.querySelector(".current_player");
+const result = document.querySelector(".result");
 
 export const displayControler = (() => {
 
@@ -26,6 +28,8 @@ export const displayControler = (() => {
 
     const updateGrid = (index, activePlayer) => {
         domGrid[index].textContent = activePlayer.marker;
+
+        domGrid[index].classList.add("taken");
     };
 
     const clearDisplay = () => {

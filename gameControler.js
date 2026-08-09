@@ -1,13 +1,13 @@
-import { displayControler } from "./displayControler";
-import { gameboard } from "./gameboard";
-import { createPlayer } from "./script";
+import { displayControler } from "./displayControler.js";
+import { gameboard } from "./gameboard.js";
+import { createPlayer } from "./Player.js";
 
 export const gameControler = (() => {
 
-    let playerX = createPlayer("Player 1", "X");
-    let playerO = createPlayer("Player 2", "O");
+    let playerX;
+    let playerO;
 
-    let activePlayer = playerX;
+    let activePlayer;
 
     /**
      * Odpowiada za rozpoczęcie gry.
@@ -93,7 +93,6 @@ export const gameControler = (() => {
         }
 
         gameboard.changeGridValues(index, activePlayer);
-
         displayControler.updateGrid(index, activePlayer);
 
         const winStatus = gameboard.checkWin();
@@ -105,6 +104,8 @@ export const gameControler = (() => {
         }
 
         switchPlayer();
+
+        displayControler.updateCurrentPlayer(getActivePlayer());
     };
 
     /**
