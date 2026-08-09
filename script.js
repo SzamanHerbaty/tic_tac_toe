@@ -6,9 +6,6 @@ const restartBtn = document.querySelector(".restart_btn");
 
 const form = document.querySelector(".name_form");
 
-console.log(form);
-
-
 function createPlayer(name, marker){
     if (marker !== "X" && marker !== "O"){
         return "Enter X or O as a marker";
