@@ -1,3 +1,11 @@
+
+/**
+ * Obiekt odpowiedzialny za kontrolę przebiegu gry.
+ * Zarządza turami graczy i aktualizacją interfejsu.
+ * @namespace
+ *  gameController
+ */
+
 export const gameboard = (() => {
 
     let gameboardGrid = [0, 0, 0,
